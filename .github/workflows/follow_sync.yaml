@@ -1,0 +1,24 @@
+name: Follow Sync
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # at midnight every day
+  workflow_dispatch: 
+
+jobs:
+  follow_sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Send Follow Sync Request
+        env:
+          USERNAME: ${{ github.actor }}
+          TOKEN: ${{ secrets.TOKEN }}
+          EXCEPTIONS: ${{ vars.EXCEPTIONS }}
+          SERVER: ${{vars.SERVER}}
+        run: |
+          curl -X POST "$SERVER" \
+            -H "Content-Type: application/json" \
+            -d "{\"username\": \"$USERNAME\", \"token\": \"$TOKEN\", \"exceptions\": $EXCEPTIONS}"
